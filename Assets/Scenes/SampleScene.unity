@@ -667,6 +667,8 @@ MonoBehaviour:
   rotateSpeed: 150
   fireballPrefab: {fileID: 2313844297807446944, guid: 781e3e3dc8733fd44a4df93a81248386, type: 3}
   firePoint: {fileID: 1853432226}
+  fireballBaseDamage: 10
+  flameWaveVFXPrefab: {fileID: 1660886836668969010, guid: 00d6f9d69a07f2c48aecfd9f1ff4ab52, type: 3}
   flameWaveDamage: 25
   flameWaveRange: 6
   flameWaveAngle: 120

@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public GameObject fireballPrefab;
     public Transform firePoint;
     public float fireballBaseDamage = 10f; // Base damage for regular Fireball
+    public GameObject flameWaveVFXPrefab; // Reference to the Flame Wave VFX
 
     // --- Flame Wave Variables ---
     public float flameWaveDamage = 25f;
@@ -127,6 +128,11 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Phoenix Form: Enhanced Flame Wave!");
         }
         Debug.Log("Casting Flame Wave!");
+        // Instantiate the VFX at the fire point
+        if (flameWaveVFXPrefab != null && firePoint != null)
+        {
+            Instantiate(flameWaveVFXPrefab, firePoint.position, firePoint.rotation);
+        }
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, flameWaveRange);
         foreach (var hitCollider in hitColliders)
         {
