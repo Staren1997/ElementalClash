@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     // --- Shooting Variables ---
     public GameObject fireballPrefab;
     public Transform firePoint;
+    public float fireballBaseDamage = 10f; // Base damage for regular Fireball
 
     // --- Flame Wave Variables ---
     public float flameWaveDamage = 25f;
@@ -21,14 +22,14 @@ public class PlayerController : MonoBehaviour
     private float flameWaveCooldownTimer = 0f;
 
     // --- Phoenix Form (Ultimate) Variables ---
-    public float phoenixFormDuration = 6f;    // How long the ultimate lasts
-    public float phoenixFormCooldown = 18f;   // Cooldown for the ultimate
-    public float phoenixFormEnergyCost = 6f;  // Energy required (placeholder)
-    public float phoenixFormSpeedBonus = 3f;  // Added move speed during ultimate
-    public float phoenixFormDamageBonus = 10f;// Added damage during ultimate
-    private float phoenixFormCooldownTimer = 0f; // Timer for ultimate cooldown
-    private bool isInPhoenixForm = false;       // State tracker
-    private Coroutine phoenixFormActiveCoroutine; // Reference to the duration coroutine
+    public float phoenixFormDuration = 6f;
+    public float phoenixFormCooldown = 18f;
+    public float phoenixFormEnergyCost = 6f;
+    public float phoenixFormSpeedBonus = 3f;
+    public float phoenixFormDamageBonus = 10f; // Bonus damage for BOTH abilities during ultimate
+    private float phoenixFormCooldownTimer = 0f;
+    private bool isInPhoenixForm = false;
+    private Coroutine phoenixFormActiveCoroutine;
 
     // --- Energy (Placeholder) ---
     public float maxEnergy = 10f;
@@ -36,65 +37,62 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        // Initialize timers and states
         flameWaveCooldownTimer = 0f;
         phoenixFormCooldownTimer = 0f;
         isInPhoenixForm = false;
-        currentEnergy = maxEnergy; // Start with full energy (placeholder)
+        currentEnergy = maxEnergy;
     }
 
     void Update()
     {
-        // --- Handle Cooldowns ---
-        if (flameWaveCooldownTimer > 0f)
-        {
-            flameWaveCooldownTimer -= Time.deltaTime;
-        }
-        if (phoenixFormCooldownTimer > 0f)
-        {
-            phoenixFormCooldownTimer -= Time.deltaTime;
-        }
+        if (flameWaveCooldownTimer > 0f) { flameWaveCooldownTimer -= Time.deltaTime; }
+        if (phoenixFormCooldownTimer > 0f) { phoenixFormCooldownTimer -= Time.deltaTime; }
 
-        // --- Handle Inputs and Actions ---
-        // Don't allow regular actions if in ultimate (can be changed later)
-        // if (!isInPhoenixForm) // Optional: disable basic move/shoot during ult?
-        // {
         HandleMovement();
         HandleShooting();
         HandleFlameWaveInput();
-        // } // End optional block
         HandleUltimateInput();
     }
 
     void HandleMovement()
     {
-        // Apply speed bonus if in Phoenix Form
         float currentMoveSpeed = moveSpeed;
-        if (isInPhoenixForm)
-        {
-            currentMoveSpeed += phoenixFormSpeedBonus;
-            // We would add flight logic here later
-        }
-
+        if (isInPhoenixForm) { currentMoveSpeed += phoenixFormSpeedBonus; }
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
         transform.Translate(Vector3.forward * verticalInput * currentMoveSpeed * Time.deltaTime);
         transform.Rotate(Vector3.up * horizontalInput * rotateSpeed * Time.deltaTime);
     }
 
+    // MODIFIED HandleShooting
     void HandleShooting()
     {
         if (Input.GetButtonDown("Fire1"))
         {
-            if (isInPhoenixForm)
-            {
-                Debug.Log("Phoenix Form: Free Fireball!");
-                // Add logic later to bypass energy cost if implemented
-            }
-
             if (fireballPrefab != null && firePoint != null)
             {
-                Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
+                // Create the fireball instance
+                GameObject spawnedFireball = Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
+                // Try to get its controller script
+                FireballController fbController = spawnedFireball.GetComponent<FireballController>();
+
+                if (fbController != null)
+                {
+                    // Calculate damage based on state
+                    float currentFireballDamage = fireballBaseDamage;
+                    if (isInPhoenixForm)
+                    {
+                        Debug.Log("Phoenix Form: Enhanced Fireball!");
+                        currentFireballDamage += phoenixFormDamageBonus;
+                        // Add logic later to bypass energy cost if implemented
+                    }
+                    // Set the damage on the spawned fireball instance
+                    fbController.damage = currentFireballDamage;
+                }
+                else
+                {
+                    Debug.LogError("Spawned Fireball is missing FireballController script!");
+                }
             }
             else
             {
@@ -114,27 +112,20 @@ public class PlayerController : MonoBehaviour
 
     void HandleUltimateInput()
     {
-        // Check for 'R' key press (can be changed), if not already active, off cooldown, and enough energy
         if (Input.GetKeyDown(KeyCode.R) && !isInPhoenixForm && phoenixFormCooldownTimer <= 0f && currentEnergy >= phoenixFormEnergyCost)
         {
             StartPhoenixForm();
         }
-        // Optional: Allow early cancel?
-        // else if (Input.GetKeyDown(KeyCode.R) && isInPhoenixForm) {
-        //     EndPhoenixForm();
-        // }
     }
 
     void CastFlameWave()
     {
-        // Apply damage bonus if in Phoenix Form
         float currentFlameWaveDamage = flameWaveDamage;
         if (isInPhoenixForm)
         {
             currentFlameWaveDamage += phoenixFormDamageBonus;
             Debug.Log("Phoenix Form: Enhanced Flame Wave!");
         }
-
         Debug.Log("Casting Flame Wave!");
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, flameWaveRange);
         foreach (var hitCollider in hitColliders)
@@ -142,14 +133,12 @@ public class PlayerController : MonoBehaviour
             if (hitCollider.transform == transform) continue;
             Vector3 directionToTarget = (hitCollider.transform.position - firePoint.position).normalized;
             float angleToTarget = Vector3.Angle(firePoint.forward, directionToTarget);
-
             if (angleToTarget <= flameWaveAngle / 2)
             {
                 Target target = hitCollider.GetComponent<Target>();
                 if (target != null)
                 {
-                    Debug.Log("Flame Wave hit TARGET: " + hitCollider.gameObject.name);
-                    // Use the potentially enhanced damage
+                    Debug.Log("Flame Wave hit TARGET: " + hitCollider.gameObject.name + " dealing " + currentFlameWaveDamage + " damage."); // Log damage
                     target.TakeDamage(currentFlameWaveDamage);
                     target.ApplyBurn();
                 }
@@ -157,47 +146,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // --- Phoenix Form Methods ---
     void StartPhoenixForm()
     {
-        if (isInPhoenixForm) return; // Prevent starting if already active
-
+        if (isInPhoenixForm) return;
         isInPhoenixForm = true;
-        currentEnergy -= phoenixFormEnergyCost; // Consume energy
-        phoenixFormCooldownTimer = phoenixFormCooldown; // Start cooldown
-
+        currentEnergy -= phoenixFormEnergyCost;
+        phoenixFormCooldownTimer = phoenixFormCooldown;
         Debug.Log("PHOENIX FORM ACTIVATED! Duration: " + phoenixFormDuration + "s");
-        // Add visual/audio activation cues here later
-
-        // Stop previous timer coroutine if it exists (e.g., if canceled early)
-        if (phoenixFormActiveCoroutine != null)
-        {
-            StopCoroutine(phoenixFormActiveCoroutine);
-        }
-        // Start the timer coroutine
+        if (phoenixFormActiveCoroutine != null) { StopCoroutine(phoenixFormActiveCoroutine); }
         phoenixFormActiveCoroutine = StartCoroutine(PhoenixFormTimer());
     }
 
     IEnumerator PhoenixFormTimer()
     {
-        // Wait for the specified duration
         yield return new WaitForSeconds(phoenixFormDuration);
-        // Duration ended, call EndPhoenixForm
         EndPhoenixForm();
     }
 
     void EndPhoenixForm()
     {
-        // Check if it's actually active before ending
         if (!isInPhoenixForm) return;
-
         isInPhoenixForm = false;
-        phoenixFormActiveCoroutine = null; // Clear coroutine reference
+        phoenixFormActiveCoroutine = null;
         Debug.Log("Phoenix Form deactivated.");
-        // Add visual/audio deactivation cues here later
     }
 
-    // --- Gizmos ---
     void OnDrawGizmosSelected()
     {
         if (firePoint == null) return;
