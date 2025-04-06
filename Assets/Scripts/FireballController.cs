@@ -21,5 +21,18 @@ public class FireballController : MonoBehaviour
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
 
-    // We'll add collision detection later
+    // This function is called automatically when this trigger collider overlaps with another collider
+    void OnTriggerEnter(Collider other)
+    {
+        // 'other' is the collider that we hit
+
+        // Print the name of the object we hit to the console for testing
+        Debug.Log("Fireball hit: " + other.gameObject.name);
+
+        // Destroy the fireball immediately upon hitting something
+        Destroy(gameObject);
+
+        // Later, we'll add code here to check *what* we hit (e.g., an enemy)
+        // and apply damage or effects.
+    }
 }
