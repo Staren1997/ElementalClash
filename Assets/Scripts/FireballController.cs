@@ -33,6 +33,7 @@ public class FireballController : MonoBehaviour
             // We hit a target! Call its TakeDamage function
             Debug.Log("Fireball hit TARGET: " + other.gameObject.name);
             target.TakeDamage(10f); // Deal 10 damage (arbitrary amount for now)
+            target.ApplyBurn(); // Tell the target to start burning
         }
         else
         {
