@@ -24,15 +24,23 @@ public class FireballController : MonoBehaviour
     // This function is called automatically when this trigger collider overlaps with another collider
     void OnTriggerEnter(Collider other)
     {
-        // 'other' is the collider that we hit
+        // Try to get the Target component from the object we hit
+        Target target = other.GetComponent<Target>();
 
-        // Print the name of the object we hit to the console for testing
-        Debug.Log("Fireball hit: " + other.gameObject.name);
+        // Check if the object we hit actually has the Target script attached
+        if (target != null)
+        {
+            // We hit a target! Call its TakeDamage function
+            Debug.Log("Fireball hit TARGET: " + other.gameObject.name);
+            target.TakeDamage(10f); // Deal 10 damage (arbitrary amount for now)
+        }
+        else
+        {
+            // We hit something that wasn't a target (like maybe just a wall)
+            Debug.Log("Fireball hit something else: " + other.gameObject.name);
+        }
 
-        // Destroy the fireball immediately upon hitting something
+        // Destroy the fireball immediately upon hitting anything
         Destroy(gameObject);
-
-        // Later, we'll add code here to check *what* we hit (e.g., an enemy)
-        // and apply damage or effects.
     }
 }
