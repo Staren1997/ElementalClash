@@ -671,6 +671,12 @@ MonoBehaviour:
   flameWaveRange: 6
   flameWaveAngle: 120
   flameWaveCooldown: 8
+  phoenixFormDuration: 6
+  phoenixFormCooldown: 18
+  phoenixFormEnergyCost: 6
+  phoenixFormSpeedBonus: 3
+  phoenixFormDamageBonus: 10
+  maxEnergy: 10
 --- !u!65 &380978122
 BoxCollider:
   m_ObjectHideFlags: 0
