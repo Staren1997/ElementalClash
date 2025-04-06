@@ -3,15 +3,7 @@
   "WorkspaceRootPath": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|c:\\zvezdan\\elementalclashproject1\\elementalclash\\assets\\scripts\\target.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\target.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\assets\\scripts\\fireballcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\fireballcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|c:\\zvezdan\\elementalclashproject1\\elementalclash\\assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FBB35737-8CD2-8585-78BC-58E1496322C4}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\playercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -27,39 +19,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Target.cs",
-              "DocumentMoniker": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\Assets\\Scripts\\Target.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\Target.cs",
-              "ToolTip": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\Assets\\Scripts\\Target.cs",
-              "RelativeToolTip": "Assets\\Scripts\\Target.cs",
-              "ViewState": "AgIAAFYAAAAAAAAAAAAgwGcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-06T14:38:48.323Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "FireballController.cs",
-              "DocumentMoniker": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\Assets\\Scripts\\FireballController.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\FireballController.cs",
-              "ToolTip": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\Assets\\Scripts\\FireballController.cs",
-              "RelativeToolTip": "Assets\\Scripts\\FireballController.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAgwC0AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-06T01:56:03.132Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "PlayerController.cs",
               "DocumentMoniker": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\Assets\\Scripts\\PlayerController.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\PlayerController.cs",
               "ToolTip": "C:\\Zvezdan\\ElementalClashProject1\\ElementalClash\\Assets\\Scripts\\PlayerController.cs",
               "RelativeToolTip": "Assets\\Scripts\\PlayerController.cs",
-              "ViewState": "AgIAACgAAAAAAAAAAAAcwDsAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAF8AAAAAAAAAAAAgwHkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-06T00:59:02.789Z"
+              "WhenOpened": "2025-04-06T15:22:03.301Z",
+              "EditorCaption": ""
             }
           ]
         }
