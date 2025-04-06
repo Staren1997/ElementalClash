@@ -9,141 +9,204 @@ public class PlayerController : MonoBehaviour
     public float rotateSpeed = 150.0f;
 
     // --- Shooting Variables ---
-    public GameObject fireballPrefab; // Reference to the Fireball prefab
-    public Transform firePoint; // Point where the fireball will spawn
+    public GameObject fireballPrefab;
+    public Transform firePoint;
 
     // --- Flame Wave Variables ---
-    public float flameWaveDamage = 25f; // Base damage for Flame Wave
-    public float flameWaveRange = 6f;   // How far the wave reaches
-    [Range(0, 360)] // Attribute to make angle a slider in Inspector
-    public float flameWaveAngle = 120f; // The angle of the cone (120 degrees total)
-    public float flameWaveCooldown = 8f;  // Cooldown time in seconds
-    private float flameWaveCooldownTimer = 0f; // Timer to track cooldown
+    public float flameWaveDamage = 25f;
+    public float flameWaveRange = 6f;
+    [Range(0, 360)]
+    public float flameWaveAngle = 120f;
+    public float flameWaveCooldown = 8f;
+    private float flameWaveCooldownTimer = 0f;
 
-    // Start is called before the first frame update
+    // --- Phoenix Form (Ultimate) Variables ---
+    public float phoenixFormDuration = 6f;    // How long the ultimate lasts
+    public float phoenixFormCooldown = 18f;   // Cooldown for the ultimate
+    public float phoenixFormEnergyCost = 6f;  // Energy required (placeholder)
+    public float phoenixFormSpeedBonus = 3f;  // Added move speed during ultimate
+    public float phoenixFormDamageBonus = 10f;// Added damage during ultimate
+    private float phoenixFormCooldownTimer = 0f; // Timer for ultimate cooldown
+    private bool isInPhoenixForm = false;       // State tracker
+    private Coroutine phoenixFormActiveCoroutine; // Reference to the duration coroutine
+
+    // --- Energy (Placeholder) ---
+    public float maxEnergy = 10f;
+    private float currentEnergy;
+
     void Start()
     {
-        // Make sure cooldown timer starts at 0 so we can fire immediately
+        // Initialize timers and states
         flameWaveCooldownTimer = 0f;
+        phoenixFormCooldownTimer = 0f;
+        isInPhoenixForm = false;
+        currentEnergy = maxEnergy; // Start with full energy (placeholder)
     }
 
-    // Update is called once per frame
     void Update()
     {
-        // Handle Cooldowns
-        // Decrease cooldown timer if it's greater than 0
+        // --- Handle Cooldowns ---
         if (flameWaveCooldownTimer > 0f)
         {
             flameWaveCooldownTimer -= Time.deltaTime;
         }
+        if (phoenixFormCooldownTimer > 0f)
+        {
+            phoenixFormCooldownTimer -= Time.deltaTime;
+        }
 
-        // Handle Inputs and Actions
+        // --- Handle Inputs and Actions ---
+        // Don't allow regular actions if in ultimate (can be changed later)
+        // if (!isInPhoenixForm) // Optional: disable basic move/shoot during ult?
+        // {
         HandleMovement();
         HandleShooting();
-        HandleFlameWaveInput(); // Call the new input method
+        HandleFlameWaveInput();
+        // } // End optional block
+        HandleUltimateInput();
     }
 
     void HandleMovement()
     {
+        // Apply speed bonus if in Phoenix Form
+        float currentMoveSpeed = moveSpeed;
+        if (isInPhoenixForm)
+        {
+            currentMoveSpeed += phoenixFormSpeedBonus;
+            // We would add flight logic here later
+        }
+
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.forward * verticalInput * moveSpeed * Time.deltaTime);
+        transform.Translate(Vector3.forward * verticalInput * currentMoveSpeed * Time.deltaTime);
         transform.Rotate(Vector3.up * horizontalInput * rotateSpeed * Time.deltaTime);
     }
 
     void HandleShooting()
     {
-        if (Input.GetButtonDown("Fire1")) // Fire1 for Fireball
+        if (Input.GetButtonDown("Fire1"))
         {
+            if (isInPhoenixForm)
+            {
+                Debug.Log("Phoenix Form: Free Fireball!");
+                // Add logic later to bypass energy cost if implemented
+            }
+
             if (fireballPrefab != null && firePoint != null)
             {
                 Instantiate(fireballPrefab, firePoint.position, firePoint.rotation);
             }
             else
             {
-                Debug.LogError("Fireball Prefab or Fire Point not assigned in the Inspector!");
+                Debug.LogError("Fireball Prefab or Fire Point not assigned!");
             }
         }
     }
 
-    // Checks for Flame Wave input
     void HandleFlameWaveInput()
     {
-        // Check if "Fire2" (Right Mouse Button by default) is pressed AND cooldown is ready
         if (Input.GetButtonDown("Fire2") && flameWaveCooldownTimer <= 0f)
         {
-            CastFlameWave(); // Call the function to perform the attack
-            flameWaveCooldownTimer = flameWaveCooldown; // Reset the cooldown timer
+            CastFlameWave();
+            flameWaveCooldownTimer = flameWaveCooldown;
         }
     }
 
-    // Performs the Flame Wave cone attack logic
+    void HandleUltimateInput()
+    {
+        // Check for 'R' key press (can be changed), if not already active, off cooldown, and enough energy
+        if (Input.GetKeyDown(KeyCode.R) && !isInPhoenixForm && phoenixFormCooldownTimer <= 0f && currentEnergy >= phoenixFormEnergyCost)
+        {
+            StartPhoenixForm();
+        }
+        // Optional: Allow early cancel?
+        // else if (Input.GetKeyDown(KeyCode.R) && isInPhoenixForm) {
+        //     EndPhoenixForm();
+        // }
+    }
+
     void CastFlameWave()
     {
+        // Apply damage bonus if in Phoenix Form
+        float currentFlameWaveDamage = flameWaveDamage;
+        if (isInPhoenixForm)
+        {
+            currentFlameWaveDamage += phoenixFormDamageBonus;
+            Debug.Log("Phoenix Form: Enhanced Flame Wave!");
+        }
+
         Debug.Log("Casting Flame Wave!");
-
-        // --- Cone Detection Logic ---
-        // Find all colliders within the flameWaveRange around the firePoint
         Collider[] hitColliders = Physics.OverlapSphere(firePoint.position, flameWaveRange);
-
-        // Loop through all the colliders found
         foreach (var hitCollider in hitColliders)
         {
-            // Ignore hitting the player itself
-            if (hitCollider.transform == transform)
-            {
-                continue; // Skip to the next collider in the loop
-            }
-
-            // Calculate direction from the fire point (or player center) to the hit collider
+            if (hitCollider.transform == transform) continue;
             Vector3 directionToTarget = (hitCollider.transform.position - firePoint.position).normalized;
-
-            // Calculate the angle between the player's forward direction and the direction to the target
             float angleToTarget = Vector3.Angle(firePoint.forward, directionToTarget);
 
-            // Check if the angle is within half of our specified cone angle
             if (angleToTarget <= flameWaveAngle / 2)
             {
-                // The collider is within the cone! Now check if it's a target
                 Target target = hitCollider.GetComponent<Target>();
                 if (target != null)
                 {
-                    // It's a target! Apply damage and burn
                     Debug.Log("Flame Wave hit TARGET: " + hitCollider.gameObject.name);
-                    target.TakeDamage(flameWaveDamage);
+                    // Use the potentially enhanced damage
+                    target.TakeDamage(currentFlameWaveDamage);
                     target.ApplyBurn();
                 }
-                // Optional: Add logic here later to affect non-target objects if needed
-                // Optional: Add logic here later for destroying projectiles hit by the wave
             }
         }
-        // --- End Cone Detection Logic ---
     }
-    // Draw helpful visualizations in the Scene view when the Player object is selected
+
+    // --- Phoenix Form Methods ---
+    void StartPhoenixForm()
+    {
+        if (isInPhoenixForm) return; // Prevent starting if already active
+
+        isInPhoenixForm = true;
+        currentEnergy -= phoenixFormEnergyCost; // Consume energy
+        phoenixFormCooldownTimer = phoenixFormCooldown; // Start cooldown
+
+        Debug.Log("PHOENIX FORM ACTIVATED! Duration: " + phoenixFormDuration + "s");
+        // Add visual/audio activation cues here later
+
+        // Stop previous timer coroutine if it exists (e.g., if canceled early)
+        if (phoenixFormActiveCoroutine != null)
+        {
+            StopCoroutine(phoenixFormActiveCoroutine);
+        }
+        // Start the timer coroutine
+        phoenixFormActiveCoroutine = StartCoroutine(PhoenixFormTimer());
+    }
+
+    IEnumerator PhoenixFormTimer()
+    {
+        // Wait for the specified duration
+        yield return new WaitForSeconds(phoenixFormDuration);
+        // Duration ended, call EndPhoenixForm
+        EndPhoenixForm();
+    }
+
+    void EndPhoenixForm()
+    {
+        // Check if it's actually active before ending
+        if (!isInPhoenixForm) return;
+
+        isInPhoenixForm = false;
+        phoenixFormActiveCoroutine = null; // Clear coroutine reference
+        Debug.Log("Phoenix Form deactivated.");
+        // Add visual/audio deactivation cues here later
+    }
+
+    // --- Gizmos ---
     void OnDrawGizmosSelected()
     {
-        // Make sure we have a valid firePoint assigned before trying to draw
-        if (firePoint == null)
-            return;
-
-        // Set the color for our gizmos
-        Gizmos.color = Color.yellow; // Or Color.red, Color.blue, etc.
-
-        // --- Draw the Range Sphere ---
-        // Draws a wireframe sphere showing the maximum range
+        if (firePoint == null) return;
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(firePoint.position, flameWaveRange);
-
-        // --- Draw the Cone Angle Lines ---
-        // Calculate the direction vectors for the left and right edges of the cone
         Vector3 forward = firePoint.forward;
         Vector3 leftRayDirection = Quaternion.Euler(0, -flameWaveAngle / 2, 0) * forward;
         Vector3 rightRayDirection = Quaternion.Euler(0, flameWaveAngle / 2, 0) * forward;
-
-        // Draw lines representing the edges of the cone
         Gizmos.DrawRay(firePoint.position, leftRayDirection * flameWaveRange);
         Gizmos.DrawRay(firePoint.position, rightRayDirection * flameWaveRange);
-
-        // Optional: Draw a line showing the center direction
-        // Gizmos.DrawRay(firePoint.position, forward * flameWaveRange);
     }
 }
