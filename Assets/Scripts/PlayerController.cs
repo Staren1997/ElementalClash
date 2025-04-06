@@ -119,4 +119,31 @@ public class PlayerController : MonoBehaviour
         }
         // --- End Cone Detection Logic ---
     }
+    // Draw helpful visualizations in the Scene view when the Player object is selected
+    void OnDrawGizmosSelected()
+    {
+        // Make sure we have a valid firePoint assigned before trying to draw
+        if (firePoint == null)
+            return;
+
+        // Set the color for our gizmos
+        Gizmos.color = Color.yellow; // Or Color.red, Color.blue, etc.
+
+        // --- Draw the Range Sphere ---
+        // Draws a wireframe sphere showing the maximum range
+        Gizmos.DrawWireSphere(firePoint.position, flameWaveRange);
+
+        // --- Draw the Cone Angle Lines ---
+        // Calculate the direction vectors for the left and right edges of the cone
+        Vector3 forward = firePoint.forward;
+        Vector3 leftRayDirection = Quaternion.Euler(0, -flameWaveAngle / 2, 0) * forward;
+        Vector3 rightRayDirection = Quaternion.Euler(0, flameWaveAngle / 2, 0) * forward;
+
+        // Draw lines representing the edges of the cone
+        Gizmos.DrawRay(firePoint.position, leftRayDirection * flameWaveRange);
+        Gizmos.DrawRay(firePoint.position, rightRayDirection * flameWaveRange);
+
+        // Optional: Draw a line showing the center direction
+        // Gizmos.DrawRay(firePoint.position, forward * flameWaveRange);
+    }
 }
