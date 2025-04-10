@@ -118,12 +118,21 @@ public class PlayerController : MonoBehaviour
 
     void HandleFlameWaveInput()
     {
-        // We'll add energy cost check here later
-        if (Input.GetButtonDown("Fire2") && flameWaveCooldownTimer <= 0f)
+        // Check if enough energy for Flame Wave
+        bool canAfford = currentEnergy >= flameWaveEnergyCost;
+
+        // Check if "Fire2" (Right Mouse Button by default) is pressed AND cooldown is ready AND enough energy
+        if (Input.GetButtonDown("Fire2") && flameWaveCooldownTimer <= 0f && canAfford)
         {
-            CastFlameWave();
-            flameWaveCooldownTimer = flameWaveCooldown;
-            // Add energy cost deduction later: currentEnergy -= flameWaveEnergyCost;
+            CastFlameWave(); // Call the function to perform the attack
+            currentEnergy -= flameWaveEnergyCost; // Deduct energy cost
+            flameWaveCooldownTimer = flameWaveCooldown; // Reset the cooldown timer
+            Debug.Log("Used " + flameWaveEnergyCost + " energy for Flame Wave. Remaining: " + currentEnergy);
+        }
+        // Optional: Add feedback if trying to cast without enough energy
+        else if (Input.GetButtonDown("Fire2") && flameWaveCooldownTimer <= 0f && !canAfford)
+        {
+            Debug.Log("Not enough energy for Flame Wave! Need: " + flameWaveEnergyCost + ", Have: " + currentEnergy);
         }
     }
 
