@@ -665,20 +665,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   rotateSpeed: 150
+  maxEnergy: 10
+  energyRegenRate: 0.2
   fireballPrefab: {fileID: 2313844297807446944, guid: 781e3e3dc8733fd44a4df93a81248386, type: 3}
   firePoint: {fileID: 1853432226}
   fireballBaseDamage: 10
+  fireballEnergyCost: 2
   flameWaveVFXPrefab: {fileID: 1660886836668969010, guid: 00d6f9d69a07f2c48aecfd9f1ff4ab52, type: 3}
   flameWaveDamage: 25
   flameWaveRange: 6
   flameWaveAngle: 120
   flameWaveCooldown: 8
+  flameWaveEnergyCost: 4
   phoenixFormDuration: 6
   phoenixFormCooldown: 18
   phoenixFormEnergyCost: 6
   phoenixFormSpeedBonus: 3
   phoenixFormDamageBonus: 10
-  maxEnergy: 10
 --- !u!65 &380978122
 BoxCollider:
   m_ObjectHideFlags: 0
