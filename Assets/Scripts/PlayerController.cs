@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
     private float phoenixFormCooldownTimer = 0f;
     private bool isInPhoenixForm = false;
     private Coroutine phoenixFormActiveCoroutine;
+    public GameObject phoenixFormVFXPrefab; // Reference to the looping VFX prefab
+    private GameObject activePhoenixVFXInstance; // To keep track of the spawned effect
 
     void Start()
     {
@@ -193,6 +195,12 @@ public class PlayerController : MonoBehaviour
         Debug.Log("PHOENIX FORM ACTIVATED! Energy Used: " + phoenixFormEnergyCost + ", Remaining: " + currentEnergy);
         if (phoenixFormActiveCoroutine != null) { StopCoroutine(phoenixFormActiveCoroutine); }
         phoenixFormActiveCoroutine = StartCoroutine(PhoenixFormTimer());
+        // Instantiate the looping VFX as a child of the player
+        if (phoenixFormVFXPrefab != null)
+        {
+            // Instantiate under the player transform so it moves with the player
+            activePhoenixVFXInstance = Instantiate(phoenixFormVFXPrefab, transform.position, transform.rotation, transform);
+        }
     }
 
     IEnumerator PhoenixFormTimer()
@@ -203,6 +211,12 @@ public class PlayerController : MonoBehaviour
 
     void EndPhoenixForm()
     {
+        // Destroy the active VFX instance if it exists
+        if (activePhoenixVFXInstance != null)
+        {
+            Destroy(activePhoenixVFXInstance);
+            activePhoenixVFXInstance = null; // Clear the reference
+        }
         if (!isInPhoenixForm) return;
         isInPhoenixForm = false;
         phoenixFormActiveCoroutine = null;
